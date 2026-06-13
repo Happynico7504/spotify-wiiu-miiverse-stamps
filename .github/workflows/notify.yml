@@ -1,13 +1,14 @@
 name: Notify Main Repo
 
 on:
-  push:
+  workflow_dispatch:
+  pull_request:
+    types: [closed]
     branches: [main]
-    paths:
-      - 'packs.json'
 
 jobs:
   notify:
+    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     environment: Stamps Sync
     steps:
