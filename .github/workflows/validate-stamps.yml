@@ -48,7 +48,16 @@ jobs:
           rows = []
           failed = False
 
+          import re
+          STAMP_RE = re.compile(r'^stamp\d+\.png$', re.IGNORECASE)
+
           for fname in files:
+              basename = os.path.basename(fname)
+              if not STAMP_RE.match(basename):
+                  rows.append(f'| `{fname}` | ❌ | Filename must match `stampN.png` (e.g. `stamp1.png`) |')
+                  failed = True
+                  continue
+
               if not os.path.exists(fname):
                   rows.append(f'| `{fname}` | ❌ | File not found (deleted?) |')
                   failed = True
