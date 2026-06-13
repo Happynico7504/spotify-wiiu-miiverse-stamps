@@ -116,8 +116,8 @@ jobs:
           fi
           BODY="## Stamp preview
 
-${TABLE}
+          ${TABLE}
 
-[Download converted previews]($RUN) (expand **Artifacts** at the bottom of the run page)"
+          [Download converted previews]($RUN) (expand **Artifacts** at the bottom of the run page)"
           gh pr comment "$PR" --body "$BODY" --edit-last 2>/dev/null \
             || gh pr comment "$PR" --body "$BODY"
