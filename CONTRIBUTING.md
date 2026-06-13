@@ -28,7 +28,7 @@ Pull requests that violate these rules will be closed without merging.
 2. Add a row to [CREDITS.md](CREDITS.md) with your filename, a short description, and your GitHub username
 3. Open a pull request targeting `main`
 
-CI will automatically convert your image to 100×100 B&W and run a quality check. A maintainer will review the converted preview before merging.
+CI will automatically convert your image to 100×100 B&W and run a quality check. A maintainer will review the converted preview before merging. The pack is capped at 100 stamps total (Miiverse SDK limit).
 
 ## Quality check
 
@@ -51,7 +51,7 @@ If you want a completely separate set of stamps (e.g. a theme pack), you can hos
    ```
 3. Once merged, your pack appears in the in-app picker alongside the official one
 
-The `stamps` array is required — `raw.githubusercontent.com` does not support directory listing so the app needs the explicit filenames. Images must already be in the correct format (100×100 B&W PNG); third-party packs are not auto-converted by CI.
+The `stamps` array is required — `raw.githubusercontent.com` does not support directory listing so the app needs the explicit filenames. Images must already be in the correct format (100×100 B&W PNG); third-party packs are not auto-converted by CI. Packs are capped at 100 stamps (Miiverse SDK limit).
 
 The same content rules above apply to custom packs. PRs adding packs with inappropriate content will be rejected.
 
