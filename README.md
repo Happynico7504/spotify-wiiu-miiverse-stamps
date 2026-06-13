@@ -8,7 +8,7 @@ Press **Stick L** while a track is playing to open the post applet. A pack picke
 
 ## Contributing stamps to this pack
 
-Drop an image file into this repo and open a pull request. The CI pipeline will automatically convert it to the correct format (100×100, black and white) and sync it into the app.
+Drop an image file into this repo and open a pull request. The CI pipeline will automatically convert it to the correct format (100×100, black and white) and sync it into the app. See [CONTRIBUTING.md](CONTRIBUTING.md) for content rules and quality requirements.
 
 **Supported formats:** PNG, JPG, BMP, GIF, WebP
 
