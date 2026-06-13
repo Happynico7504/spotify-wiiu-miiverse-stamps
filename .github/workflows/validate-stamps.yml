@@ -1,0 +1,114 @@
+name: Validate Stamps
+
+# pull_request_target runs with base-repo token so we can post PR comments
+# from fork PRs. We only process image files with Pillow — no user code runs.
+on:
+  pull_request_target:
+    branches: [main]
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+
+      - name: Install Pillow
+        run: pip install Pillow --quiet
+
+      - name: Find changed image files
+        id: changed
+        run: |
+          BASE=${{ github.event.pull_request.base.sha }}
+          git fetch origin "$BASE" --depth=1
+          git diff --name-only --diff-filter=AM "$BASE" HEAD \
+            | grep -iE '\.(png|jpg|jpeg|bmp|gif|webp)$' \
+            > /tmp/changed_images.txt || true
+          echo "count=$(wc -l < /tmp/changed_images.txt)" >> "$GITHUB_OUTPUT"
+
+      - name: Convert and validate
+        if: steps.changed.outputs.count != '0'
+        id: validate
+        run: |
+          python3 - <<'EOF'
+          from PIL import Image
+          import os, sys, io
+
+          with open('/tmp/changed_images.txt') as fh:
+              files = [l.strip() for l in fh if l.strip()]
+
+          os.makedirs('preview', exist_ok=True)
+          rows = []
+          failed = False
+
+          for fname in files:
+              if not os.path.exists(fname):
+                  rows.append(f'| `{fname}` | ❌ | File not found (deleted?) |')
+                  failed = True
+                  continue
+
+              img = Image.open(fname).convert('L')
+              img = img.resize((100, 100), Image.LANCZOS)
+              img = img.point(lambda p: 255 if p > 127 else 0)
+
+              pixels = list(img.getdata())
+              white  = pixels.count(255)
+              black  = pixels.count(0)
+              total  = len(pixels)
+              dom    = max(white, black) / total * 100
+
+              stem = os.path.splitext(os.path.basename(fname))[0]
+              img.convert('RGB').save(f'preview/{stem}_preview.png')
+
+              if dom > 98:
+                  status = '❌'
+                  note   = f'{dom:.0f}% single color — invisible or solid block in applet'
+                  failed = True
+              else:
+                  status = '✅'
+                  note   = f'{white} white / {black} black px ({dom:.0f}% dominant)'
+
+              rows.append(f'| `{fname}` | {status} | {note} |')
+              print(f'{status} {fname}: {note}')
+
+          header = ['| File | Result | Detail |', '|------|--------|--------|']
+          with open('validate_summary.md', 'w') as f:
+              f.write('\n'.join(header + rows) + '\n')
+
+          sys.exit(1 if failed else 0)
+          EOF
+
+      - name: Upload converted previews
+        if: always() && steps.changed.outputs.count != '0'
+        uses: actions/upload-artifact@v4
+        with:
+          name: stamp-previews
+          path: preview/
+          if-no-files-found: ignore
+
+      - name: Post PR comment
+        if: always() && steps.changed.outputs.count != '0'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR:       ${{ github.event.pull_request.number }}
+        run: |
+          RUN="https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          if [ -f validate_summary.md ]; then
+            TABLE=$(cat validate_summary.md)
+          else
+            TABLE="_No images changed._"
+          fi
+          BODY="## Stamp preview
+
+${TABLE}
+
+[Download converted previews]($RUN) (expand **Artifacts** at the bottom of the run page)"
+          gh pr comment "$PR" --body "$BODY" --edit-last 2>/dev/null \
+            || gh pr comment "$PR" --body "$BODY"
