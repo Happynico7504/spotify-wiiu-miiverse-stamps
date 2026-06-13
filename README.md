@@ -9,3 +9,9 @@ Drop an image file into this repo and open a pull request. The CI pipeline will 
 **Supported formats:** PNG, JPG, BMP, GIF, WebP
 
 Any size and color is fine — images are resized to 100×100 and converted to pure black and white automatically.
+
+Please add a row to [CREDITS.md](CREDITS.md) with your filename, a short description, and your GitHub username.
+
+## License
+
+All stamps are released under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). See [CREDITS.md](CREDITS.md) for attribution.
