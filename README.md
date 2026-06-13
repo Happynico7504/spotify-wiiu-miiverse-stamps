@@ -18,19 +18,20 @@ Please add a row to [CREDITS.md](CREDITS.md) with your filename, a short descrip
 
 ## Creating your own stamp pack
 
-1. Create a new public GitHub repo with your stamp images (any format, any name)
-2. Add an entry to [`packs.json`](packs.json) in this repo pointing at your raw GitHub URL:
+1. Create a new public GitHub repo with your stamp images named `stamp1.png`, `stamp2.png`, … (100×100, black and white PNG)
+2. Add an entry to [`packs.json`](packs.json) in this repo with the explicit filename list:
    ```json
    {
      "id": "your-pack-id",
      "name": "Your Pack Name",
      "description": "Short description",
-     "base_url": "https://raw.githubusercontent.com/you/your-repo/main/"
+     "base_url": "https://raw.githubusercontent.com/you/your-repo/main/",
+     "stamps": ["stamp1.png", "stamp2.png", "stamp3.png"]
    }
    ```
 3. Open a pull request — once merged, your pack will appear in the in-app picker
 
-Your images will be downloaded and converted automatically by the app when a user selects your pack. They do not need to be pre-converted.
+The `stamps` array is required. `raw.githubusercontent.com` does not support directory listing, so the app needs the explicit filenames to know what to download. Images must be pre-converted to 100×100 black and white PNG — unlike contributions to this repo, third-party packs are not auto-converted by CI.
 
 ## License
 
