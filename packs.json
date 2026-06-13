@@ -4,7 +4,7 @@
       "id": "official",
       "name": "Official",
       "description": "Official Spotify Wii U stamps",
-      "base_url": "https://raw.githubusercontent.com/Happynico7504/spotify-wiiu/main/stamps/",
+      "base_url": "https://raw.githubusercontent.com/Happynico7504/spotify-wiiu-miiverse-stamps/main/",
       "stamps": [
         "stamp1.png",
         "stamp2.png",
