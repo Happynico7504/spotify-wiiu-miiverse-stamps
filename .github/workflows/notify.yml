@@ -1,0 +1,16 @@
+name: Notify Main Repo
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger stamp sync
+        run: |
+          gh api repos/Happynico7504/spotify-wiiu/dispatches \
+            -f event_type=stamps-updated
+        env:
+          GH_TOKEN: ${{ secrets.MAIN_REPO_TOKEN }}
