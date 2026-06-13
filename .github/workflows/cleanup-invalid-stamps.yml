@@ -1,0 +1,46 @@
+name: Cleanup Invalid Stamp Names
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Remove image files not matching stampN.png
+        id: cleanup
+        run: |
+          deleted=""
+          while IFS= read -r -d '' f; do
+            basename="${f##*/}"
+            if ! echo "$basename" | grep -qiE '^stamp[0-9]+\.png$'; then
+              git rm "$f"
+              deleted="$deleted\n- \`$f\`"
+            fi
+          done < <(find . -path ./.git -prune -o -iname '*.png' -print0 \
+                         -o -path ./.git -prune -o -iname '*.jpg' -print0 \
+                         -o -path ./.git -prune -o -iname '*.jpeg' -print0 \
+                         -o -path ./.git -prune -o -iname '*.bmp' -print0 \
+                         -o -path ./.git -prune -o -iname '*.gif' -print0 \
+                         -o -path ./.git -prune -o -iname '*.webp' -print0)
+
+          if [ -z "$deleted" ]; then
+            echo "nothing to clean up"
+            echo "deleted=" >> "$GITHUB_OUTPUT"
+          else
+            echo "deleted=$deleted" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Commit removal
+        if: steps.cleanup.outputs.deleted != ''
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git commit -m "ci: remove incorrectly named image files"
+          git push
