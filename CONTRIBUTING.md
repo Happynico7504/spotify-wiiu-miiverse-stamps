@@ -34,6 +34,27 @@ CI will automatically convert your image to 100×100 B&W and run a quality check
 
 CI fails if the converted B&W image is more than 98% a single color. This catches images that would appear invisible (all white) or as a solid block (all black) in the applet.
 
+## Creating a custom pack
+
+If you want a completely separate set of stamps (e.g. a theme pack), you can host your own pack without contributing here:
+
+1. Create a public GitHub repo with your stamp images named `stamp1.png`, `stamp2.png`, … (100×100 B&W PNG)
+2. Open a PR here adding an entry to [`packs.json`](packs.json):
+   ```json
+   {
+     "id": "your-pack-id",
+     "name": "Your Pack Name",
+     "description": "Short description",
+     "base_url": "https://raw.githubusercontent.com/you/your-repo/main/",
+     "stamps": ["stamp1.png", "stamp2.png", "stamp3.png"]
+   }
+   ```
+3. Once merged, your pack appears in the in-app picker alongside the official one
+
+The `stamps` array is required — `raw.githubusercontent.com` does not support directory listing so the app needs the explicit filenames. Images must already be in the correct format (100×100 B&W PNG); third-party packs are not auto-converted by CI.
+
+The same content rules above apply to custom packs. PRs adding packs with inappropriate content will be rejected.
+
 ## Attribution
 
 All stamps are released under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). By submitting, you agree your contribution can be used, shared, and adapted under that license. Make sure you have the right to release any reference material you used.
