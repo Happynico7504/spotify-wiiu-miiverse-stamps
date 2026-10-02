@@ -17,6 +17,15 @@
         "stamp9.png",
         "stamp10.png"
       ]
+    },
+    {
+      "id": "revivetendo",
+      "name": "Revivetendo Stamps",
+      "description": "Revivetendo Spotify Wii U stamps",
+      "base_url": "https://raw.githubusercontent.com/Happynico7504/spotify-wiiu-miiverse-stamps-revivetendo-edition/main/",
+      "stamps": [
+        "stamp1.png"
+      ]
     }
   ]
 }
